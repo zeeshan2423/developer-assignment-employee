@@ -103,6 +103,15 @@ class CrudManager {
     }
   }
 
+  Future<void> undoRemoveUserById(
+      {required String employeeId, required var userDetails}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<Map<String, String>> userList = await getUserDetailsList();
+    userList.add(userDetails.toMap());
+    prefs.setStringList(
+        _userListKey, userList.map((user) => json.encode(user)).toList());
+  }
+
   Future<void> clearUserDetailsList() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userListKey);

@@ -14,7 +14,7 @@ class EmployeeListView extends GetView<EmployeeListController> {
       ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
-          top: 50.h,
+          bottom: 15.h,
           right: 10.w,
         ),
         child: FloatingActionButton(
@@ -37,23 +37,6 @@ class EmployeeListView extends GetView<EmployeeListController> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndDocked,
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.only(
-          top: 12.5.h,
-          left: 12.5.w,
-          bottom: 35.h,
-        ),
-        child: Text(
-          StringManager.swipe,
-          style: GoogleFonts.roboto(
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w400,
-            color: controller.userDetailsList.isNotEmpty
-                ? ColorManager.greyText
-                : ColorManager.field,
-          ),
-        ),
-      ),
       body: StreamBuilder(
         stream: controller.userDetailsStream,
         builder: (context, snapshot) {
@@ -141,7 +124,41 @@ class EmployeeListView extends GetView<EmployeeListController> {
                               ),
                             ),
                             onDismissed: (direction) {
-                              controller.removeUserDetails(index);
+                              final snackBar = SnackBar(
+                                duration: const Duration(
+                                  seconds: 2,
+                                ),
+                                content: Text(
+                                  StringManager.deleted,
+                                  style: GoogleFonts.roboto(
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w400,
+                                    color: ColorManager.white,
+                                  ),
+                                ),
+                                action: SnackBarAction(
+                                  label: StringManager.undo,
+                                  onPressed: () async {
+                                    controller.undoDelete.value = true;
+                                    await CrudManager.instance.addUserDetails(
+                                      employeeId: userDetails['employeeId'],
+                                      employeeName: userDetails['employeeName'],
+                                      role: userDetails['role'],
+                                      fromDate: userDetails['fromDate'],
+                                      toDate: userDetails['toDate'],
+                                    );
+                                    controller.undoRemoveUser(
+                                        userDetails, index);
+                                  },
+                                ),
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                              if (controller.undoDelete.value == false) {
+                                controller.removeUserDetails(index);
+                              } else {
+                                controller.undoDelete.value = false;
+                              }
                             },
                             child: GestureDetector(
                               onTap: () async {
@@ -253,7 +270,31 @@ class EmployeeListView extends GetView<EmployeeListController> {
                               ),
                             ),
                             onDismissed: (direction) {
-                              controller.removeUserDetails(index);
+                              final snackBar = SnackBar(
+                                content: Text(
+                                  StringManager.deleted,
+                                  style: GoogleFonts.roboto(
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w400,
+                                    color: ColorManager.white,
+                                  ),
+                                ),
+                                action: SnackBarAction(
+                                  label: StringManager.undo,
+                                  onPressed: () async {
+                                    controller.undoDelete.value = true;
+                                    controller.undoRemoveUser(
+                                        userDetails, index);
+                                  },
+                                ),
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                              if (controller.undoDelete.value == false) {
+                                controller.removeUserDetails(index);
+                              } else {
+                                controller.undoDelete.value = false;
+                              }
                             },
                             child: GestureDetector(
                               onTap: () async {
@@ -314,6 +355,25 @@ class EmployeeListView extends GetView<EmployeeListController> {
                             ),
                           );
                         },
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible:
+                        controller.userDetailsList.isNotEmpty ? true : false,
+                    child: Container(
+                      padding: EdgeInsets.only(
+                        top: 12.5.h,
+                        left: 12.5.w,
+                        bottom: 35.h,
+                      ),
+                      child: Text(
+                        StringManager.swipe,
+                        style: GoogleFonts.roboto(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w400,
+                          color: ColorManager.greyText,
+                        ),
                       ),
                     ),
                   ),
