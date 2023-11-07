@@ -11,7 +11,7 @@ class WidgetManager {
 
   static PreferredSizeWidget customAppBar({
     required String title,
-  void Function()? onTap,
+    void Function()? onTap,
   }) {
     return AppBar(
       backgroundColor: ColorManager.primary,
@@ -514,7 +514,6 @@ class WidgetManager {
                               isEnable: isEnable[0],
                               onTap: () async {
                                 focusedDay.value = today.value;
-                                print(focusedDay.value);
                                 for (var disable in isEnable) {
                                   disable.value = false;
                                 }
@@ -631,6 +630,9 @@ class WidgetManager {
                       daysOfWeekHeight: 20.h,
                       selectedDayPredicate: (DateTime date) {
                         return isSameDay(focusedDay.value, date);
+                      },
+                      onDaySelected: (focusDay, selectedDay) {
+                        focusedDay.value = selectedDay;
                       },
                       headerStyle: HeaderStyle(
                         titleCentered: true,
