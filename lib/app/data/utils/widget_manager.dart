@@ -484,7 +484,9 @@ class WidgetManager {
         alignment: Alignment.center,
         insetPadding: EdgeInsets.symmetric(
           horizontal: 10.w,
-          vertical: ScreenUtil().screenHeight / 5.25,
+          vertical: type == 1
+              ? ScreenUtil().screenHeight / 5.25
+              : ScreenUtil().screenHeight / 4.5,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(
